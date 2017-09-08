@@ -23,7 +23,7 @@ def call(body) {
 	def subject = config.subject ? config.subject : "${env.JOB_NAME} - Build #${env.BUILD_NUMBER} - ${currentBuild.result}!"
 	def content = '${JELLY_SCRIPT,template="static-analysis"}'
 	def attachLog = (config.attachLog != null) ? config.attachLog : (currentBuild.result != "SUCCESS") // Attach buildlog when the build is not successfull
-	def recipientProviders = '[[$class: 'CulpritsRecipientProvider'], [$class: 'RequesterRecipientProvider']]'
+	def recipientProviders = '[[$class: \'CulpritsRecipientProvider\'], [$class: \'RequesterRecipientProvider\']]'
 
 	// Send email
      emailext(body: content, mimeType: 'text/html',
