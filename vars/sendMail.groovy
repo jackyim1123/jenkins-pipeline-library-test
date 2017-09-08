@@ -19,28 +19,14 @@ def call(body) {
 	body.delegate = config
 	body()
 
+	def to = config.emailRecipients
 	def subject = config.subject ? config.subject : "${env.JOB_NAME} - Build #${env.BUILD_NUMBER} - ${currentBuild.result}!"
 	def content = '${JELLY_SCRIPT,template="static-analysis"}'
 	def attachLog = (config.attachLog != null) ? config.attachLog : (currentBuild.result != "SUCCESS") // Attach buildlog when the build is not successfull
-
-	// Allways send a mail to the requestor (the one who started the job)
-	def to = []
-	to << emailextrecipients([[$class: 'RequesterRecipientProvider']])
-
-	// Append email recipients given by user
-	if (config.emailRecipients != null) {
-		to << config.emailRecipients
-	}
-
-	// Append Culprits when the build is not successfull
-	if (currentBuild.result != "SUCCESS") {
-		to << emailextrecipients([[$class: 'CulpritsRecipientProvider']])
-	}
-
-	to = to.join(',')
+	def recipientProviders = "[[$class, 'RequesterRecipientProvider'], [$class, 'CulpritsRecipientProvider']]"
 
 	// Send email
      emailext(body: content, mimeType: 'text/html',
          replyTo: '$DEFAULT_REPLYTO', subject: subject,
-         to: to, attachLog: attachLog )
+         to: to, attachLog: attachLog, recipientProviders: recipientProviders)
 }
