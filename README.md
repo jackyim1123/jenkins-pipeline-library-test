@@ -1,3 +1,3 @@
 # jenkins-pipeline-library-test
 
-This repo contains test for jenkins pipeline library.
+This repo contains some test scripts for jenkins pipeline library. 
